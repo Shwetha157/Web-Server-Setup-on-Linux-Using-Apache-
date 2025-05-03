@@ -4,7 +4,6 @@
 ![Apache](https://img.shields.io/badge/Apache-HTTPD%202.4-blue?logo=apache)
 ![OS](https://img.shields.io/badge/OS-Amazon%20Linux-ff9900?logo=amazon)
 ![Firewall](https://img.shields.io/badge/Firewall-Configured-success)
-![License](https://img.shields.io/badge/license-MIT-lightgrey)
 ![HTML](https://img.shields.io/badge/Content-Static%20HTML-orange)
 
 ---
