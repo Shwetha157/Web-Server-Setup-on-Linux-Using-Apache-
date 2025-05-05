@@ -1,0 +1,64 @@
+# Step 1: Launch Amazon Linux EC2 Instance
+
+1. Go to AWS EC2 Dashboard
+2. Launch a new instance using **Amazon Linux 2023 or Amazon Linux 2 AMI**
+3. Choose t2.micro (Free Tier)
+4. Create or choose an existing Key Pair
+5. Configure a Security Group:
+   - Port 22 (SSH)
+   - Port 80 (HTTP)
+   - Port 443 (HTTPS)
+6. Launch the instance
+
+# Step 2: Connect to EC2 Instance via SSH
+```bash
+ssh -i your-key.pem ec2-user@<your-ec2-public-ip>
+
+#Step 3: Update System and Install Apache
+  sudo yum update -y
+  sudo yum install httpd -y
+  sudo systemctl start httpd
+  sudo systemctl enable httpd
+
+#Step 4: Configure Firewall (if needed)
+ Amazon Linux typically uses firewalld (or it may be disabled with security groups used instead):
+*If firewalld is installed
+  sudo systemctl start firewalld
+  sudo systemctl enable firewalld
+  sudo firewall-cmd --permanent --add-service=http
+  sudo firewall-cmd --permanent --add-service=https
+  sudo firewall-cmd --reload
+
+#Step 5: Host a Static HTML Website
+ Create or upload an index.html file:
+  echo "<h1>Apache Web Server Deployed Successfully!</h1>" | sudo tee /var/www/html/index.html
+Open your EC2 public IP in the browse:
+  http://<your-ec2-public-ip>
+
+#Step 6: Enable HTTPS with SSL (Self-Signed or Let's Encrypt)
+ Option A: Self-Signed SSL Certificate
+  sudo mkdir /etc/httpd/ssl
+  cd /etc/httpd/ssl
+  sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+ -keyout privkey.pem -out cert.pem
+
+Option B: Let's Encrypt (recommended for production)
+Use Certbot:
+ sudo yum install -y epel-release
+ sudo yum install -y certbot python3-certbot-apache
+ sudo certbot --apache
+
+
+#Step 7: Configure Apache for HTTPS
+ Edit the SSL configuration file:
+  sudo nano /etc/httpd/conf.d/ssl.conf
+ Make sure the following lines point to your SSL cert and key:
+  rtificateFile /etc/httpd/ssl/cert.pem
+  SSLCertificateKeyFile /etc/httpd/ssl/privkey.pem
+
+
+#Step 8: Restart Apache
+ sudo systemctl restart httpd
+Test in browser:
+ HTTP: http://<your-ec2-public-ip>
+ HTTPS: https://<your-ec2-public-ip>
